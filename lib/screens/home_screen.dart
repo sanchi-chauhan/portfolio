@@ -84,6 +84,59 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
+              // Footer at the very bottom
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Container(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // Built with Flutter and heart
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Built using ',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color:
+                                  Theme.of(context).textTheme.bodyMedium?.color,
+                            ),
+                          ),
+                          const FlutterLogo(
+                            size: 16,
+                          ),
+                          Text(
+                            ' with much ',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color:
+                                  Theme.of(context).textTheme.bodyMedium?.color,
+                            ),
+                          ),
+                          Icon(
+                            Icons.favorite,
+                            size: 16,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      // Copyright
+                      Text(
+                        '© 2024 Sanchi Chauhan',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
           // Firefly - only show when first screen is 100% visible (scroll at top)

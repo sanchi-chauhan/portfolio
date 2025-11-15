@@ -140,7 +140,7 @@ class HeroSection extends StatelessWidget {
                         ? 600
                         : double.infinity,
                     child: Text(
-                      'Passionate Flutter developer with 2 years of experience creating beautiful, performant mobile and web applications.',
+                      'Passionate Flutter developer with 3 years of experience creating beautiful, performant mobile and web applications.',
                       style: TextStyle(
                         fontSize: 20,
                         color: Theme.of(context).textTheme.bodyLarge?.color,
