@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProjectsSection extends StatelessWidget {
   final AutoScrollController scrollController;
@@ -14,11 +15,12 @@ class ProjectsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final projects = [
       {
-        'title': 'E-Commerce App',
+        'title': 'tech ai assistant',
         'description':
             'A full-featured e-commerce application with shopping cart, payment integration, and user authentication.',
         'tech': ['Flutter', 'Firebase', 'Stripe'],
         'color': Theme.of(context).colorScheme.primary,
+        'codeLink': 'https://github.com/sanchi-chauhan/chat-application#',
       },
       {
         'title': 'Social Media App',
@@ -94,6 +96,8 @@ class ProjectsSection extends StatelessWidget {
                 tech: project['tech'] as List<String>,
                 color: project['color'] as Color,
                 delay: 400 + (index * 200),
+                codeLink: project['codeLink'] as String?,
+                demoLink: project['demoLink'] as String?,
               );
             },
           ),
@@ -109,6 +113,8 @@ class _ProjectCard extends StatefulWidget {
   final List<String> tech;
   final Color color;
   final int delay;
+  final String? codeLink;
+  final String? demoLink;
 
   const _ProjectCard({
     required this.title,
@@ -116,6 +122,8 @@ class _ProjectCard extends StatefulWidget {
     required this.tech,
     required this.color,
     required this.delay,
+    this.codeLink,
+    this.demoLink,
   });
 
   @override
@@ -243,7 +251,14 @@ class _ProjectCardState extends State<_ProjectCard> {
                     Row(
                       children: [
                         TextButton.icon(
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (widget.codeLink != null) {
+                              final uri = Uri.parse(widget.codeLink!);
+                              if (await canLaunchUrl(uri)) {
+                                await launchUrl(uri, mode: LaunchMode.externalApplication);
+                              }
+                            }
+                          },
                           icon: const Icon(Icons.code, size: 18),
                           label: const Text('View Code'),
                           style: TextButton.styleFrom(
@@ -252,7 +267,14 @@ class _ProjectCardState extends State<_ProjectCard> {
                         ),
                         const SizedBox(width: 16),
                         TextButton.icon(
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (widget.demoLink != null) {
+                              final uri = Uri.parse(widget.demoLink!);
+                              if (await canLaunchUrl(uri)) {
+                                await launchUrl(uri, mode: LaunchMode.externalApplication);
+                              }
+                            }
+                          },
                           icon: const Icon(Icons.open_in_new, size: 18),
                           label: const Text('Live Demo'),
                           style: TextButton.styleFrom(
