@@ -301,9 +301,6 @@ class _ProjectCardState extends State<_ProjectCard> {
                                   waitDuration:
                                       const Duration(milliseconds: 200),
                                   preferBelow: true,
-                                  constraints: BoxConstraints(
-                                    maxWidth: isSmallScreen ? 220 : 280,
-                                  ),
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
                                     color:
