@@ -16,6 +16,10 @@ class ProjectsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isPhone = screenWidth < 600;
+    final isTablet = screenWidth >= 600 && screenWidth < 1100;
+
     final projects = [
       {
         'title': 'Tech AI Assistant',
@@ -57,8 +61,8 @@ class ProjectsSection extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.symmetric(
-        vertical: MediaQuery.of(context).size.width > 600 ? 20 : 26,
-        horizontal: 48,
+        vertical: isPhone ? 16 : 20,
+        horizontal: isPhone ? 16 : (isTablet ? 24 : 48),
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -97,16 +101,18 @@ class ProjectsSection extends StatelessWidget {
           const SizedBox(height: 10),
           Flexible(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              padding: EdgeInsets.symmetric(
+                horizontal: isPhone ? 20 : (isTablet ? 12 : 30),
+                vertical: isPhone ? 8 : 20,
+              ),
               child: GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      MediaQuery.of(context).size.width > 600 ? 2 : 1,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                  childAspectRatio: 2.0,
+                  crossAxisCount: isPhone ? 1 : 2,
+                  crossAxisSpacing: isPhone ? 10 : 20,
+                  mainAxisSpacing: isPhone ? 10 : 20,
+                  childAspectRatio: isPhone ? 1.25 : (isTablet ? 1.55 : 2.0),
                 ),
                 itemCount: projects.length,
                 itemBuilder: (context, index) {
@@ -208,6 +214,7 @@ class _ProjectCardState extends State<_ProjectCard> {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final isSmallScreen = constraints.maxWidth < 400;
+                    final isVeryNarrow = constraints.maxWidth < 340;
                     final buttonDecoration = BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -227,8 +234,13 @@ class _ProjectCardState extends State<_ProjectCard> {
                         ),
                       ],
                     );
+                    final contentHorizontalPadding = isSmallScreen ? 14.0 : 22.0;
+                    final contentVerticalPadding = isSmallScreen ? 10.0 : 22.0;
                     return Padding(
-                      padding: EdgeInsets.all(isSmallScreen ? 5 : 22),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: contentHorizontalPadding,
+                        vertical: contentVerticalPadding,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.max,
@@ -259,7 +271,7 @@ class _ProjectCardState extends State<_ProjectCard> {
                                   height: 1.3,
                                 );
                                 final horizontalPadding =
-                                    (isSmallScreen ? 5.0 : 22.0) * 2;
+                                    contentHorizontalPadding * 2;
                                 final availableWidth =
                                     (constraints.maxWidth - horizontalPadding) >
                                             0
@@ -388,97 +400,229 @@ class _ProjectCardState extends State<_ProjectCard> {
                               ),
                             )
                           else
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    decoration: buttonDecoration,
-                                    child: TextButton.icon(
-                                    onPressed: () async {
-                                      if (widget.codeLink != null) {
-                                        final uri = Uri.parse(widget.codeLink!);
-                                        if (await canLaunchUrl(uri)) {
-                                          await launchUrl(uri,
-                                              mode: LaunchMode
-                                                  .externalApplication);
-                                        }
-                                      }
-                                    },
-                                    icon: Icon(Icons.code,
-                                        size: isSmallScreen ? 14 : 18),
-                                    label: Text(
-                                        isSmallScreen ? 'Code' : 'View Code',
-                                        style: TextStyle(
-                                            fontSize: isSmallScreen ? 12 : 15)),
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      foregroundColor: Colors.white,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: isSmallScreen ? 16 : 18),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                            isVeryNarrow
+                                ? Column(
+                                    children: [
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Container(
+                                          decoration: buttonDecoration,
+                                          child: TextButton.icon(
+                                            onPressed: () async {
+                                              if (widget.codeLink != null) {
+                                                final uri =
+                                                    Uri.parse(widget.codeLink!);
+                                                if (await canLaunchUrl(uri)) {
+                                                  await launchUrl(uri,
+                                                      mode: LaunchMode
+                                                          .externalApplication);
+                                                }
+                                              }
+                                            },
+                                            icon: Icon(Icons.code,
+                                                size: isSmallScreen ? 14 : 18),
+                                            label: Text(
+                                                isSmallScreen
+                                                    ? 'Code'
+                                                    : 'View Code',
+                                                style: TextStyle(
+                                                    fontSize: isSmallScreen
+                                                        ? 12
+                                                        : 15)),
+                                            style: TextButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              foregroundColor: Colors.white,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: isSmallScreen
+                                                      ? 16
+                                                      : 18),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                ),
-                                SizedBox(width: isSmallScreen ? 8 : 16),
-                                Expanded(
-                                  child: Container(
-                                    decoration: buttonDecoration,
-                                    child: TextButton.icon(
-                                    onPressed: () async {
-                                      if (widget.demoLink != null) {
-                                        try {
-                                          final uri =
-                                              Uri.parse(widget.demoLink!);
-                                          if (await canLaunchUrl(uri)) {
-                                            await launchUrl(
-                                              uri,
-                                              mode: LaunchMode.platformDefault,
-                                            );
-                                          } else {
-                                            await launchUrl(
-                                              uri,
-                                              mode: LaunchMode
-                                                  .externalApplication,
-                                            );
-                                          }
-                                        } catch (e) {
-                                          try {
-                                            final uri =
-                                                Uri.parse(widget.demoLink!);
-                                            await launchUrl(
-                                              uri,
-                                              mode: LaunchMode
-                                                  .externalApplication,
-                                            );
-                                          } catch (e2) {
-                                            print('Error launching URL: $e2');
-                                          }
-                                        }
-                                      }
-                                    },
-                                    icon: Icon(Icons.open_in_new,
-                                        size: isSmallScreen ? 14 : 18),
-                                    label: Text(
-                                        isSmallScreen ? 'Demo' : 'Live Demo',
-                                        style: TextStyle(
-                                            fontSize: isSmallScreen ? 12 : 15)),
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      foregroundColor: Colors.white,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: isSmallScreen ? 16 : 18),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                      const SizedBox(height: 8),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Container(
+                                          decoration: buttonDecoration,
+                                          child: TextButton.icon(
+                                            onPressed: () async {
+                                              if (widget.demoLink != null) {
+                                                try {
+                                                  final uri = Uri.parse(
+                                                      widget.demoLink!);
+                                                  if (await canLaunchUrl(uri)) {
+                                                    await launchUrl(
+                                                      uri,
+                                                      mode: LaunchMode
+                                                          .platformDefault,
+                                                    );
+                                                  } else {
+                                                    await launchUrl(
+                                                      uri,
+                                                      mode: LaunchMode
+                                                          .externalApplication,
+                                                    );
+                                                  }
+                                                } catch (e) {
+                                                  try {
+                                                    final uri = Uri.parse(
+                                                        widget.demoLink!);
+                                                    await launchUrl(
+                                                      uri,
+                                                      mode: LaunchMode
+                                                          .externalApplication,
+                                                    );
+                                                  } catch (e2) {
+                                                    print(
+                                                        'Error launching URL: $e2');
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            icon: Icon(Icons.open_in_new,
+                                                size: isSmallScreen ? 14 : 18),
+                                            label: Text(
+                                                isSmallScreen
+                                                    ? 'Demo'
+                                                    : 'Live Demo',
+                                                style: TextStyle(
+                                                    fontSize: isSmallScreen
+                                                        ? 12
+                                                        : 15)),
+                                            style: TextButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              foregroundColor: Colors.white,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: isSmallScreen
+                                                      ? 16
+                                                      : 18),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                    ],
+                                  )
+                                : Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          decoration: buttonDecoration,
+                                          child: TextButton.icon(
+                                            onPressed: () async {
+                                              if (widget.codeLink != null) {
+                                                final uri =
+                                                    Uri.parse(widget.codeLink!);
+                                                if (await canLaunchUrl(uri)) {
+                                                  await launchUrl(uri,
+                                                      mode: LaunchMode
+                                                          .externalApplication);
+                                                }
+                                              }
+                                            },
+                                            icon: Icon(Icons.code,
+                                                size: isSmallScreen ? 14 : 18),
+                                            label: Text(
+                                                isSmallScreen
+                                                    ? 'Code'
+                                                    : 'View Code',
+                                                style: TextStyle(
+                                                    fontSize: isSmallScreen
+                                                        ? 12
+                                                        : 15)),
+                                            style: TextButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              foregroundColor: Colors.white,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: isSmallScreen
+                                                      ? 16
+                                                      : 18),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: isSmallScreen ? 8 : 16),
+                                      Expanded(
+                                        child: Container(
+                                          decoration: buttonDecoration,
+                                          child: TextButton.icon(
+                                            onPressed: () async {
+                                              if (widget.demoLink != null) {
+                                                try {
+                                                  final uri = Uri.parse(
+                                                      widget.demoLink!);
+                                                  if (await canLaunchUrl(uri)) {
+                                                    await launchUrl(
+                                                      uri,
+                                                      mode: LaunchMode
+                                                          .platformDefault,
+                                                    );
+                                                  } else {
+                                                    await launchUrl(
+                                                      uri,
+                                                      mode: LaunchMode
+                                                          .externalApplication,
+                                                    );
+                                                  }
+                                                } catch (e) {
+                                                  try {
+                                                    final uri = Uri.parse(
+                                                        widget.demoLink!);
+                                                    await launchUrl(
+                                                      uri,
+                                                      mode: LaunchMode
+                                                          .externalApplication,
+                                                    );
+                                                  } catch (e2) {
+                                                    print(
+                                                        'Error launching URL: $e2');
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            icon: Icon(Icons.open_in_new,
+                                                size: isSmallScreen ? 14 : 18),
+                                            label: Text(
+                                                isSmallScreen
+                                                    ? 'Demo'
+                                                    : 'Live Demo',
+                                                style: TextStyle(
+                                                    fontSize: isSmallScreen
+                                                        ? 12
+                                                        : 15)),
+                                            style: TextButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              foregroundColor: Colors.white,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: isSmallScreen
+                                                      ? 16
+                                                      : 18),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                ),
-                              ],
-                            ),
                         ],
                       ),
                     );
