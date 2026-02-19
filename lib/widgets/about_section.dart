@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutSection extends StatelessWidget {
+  static const String _profileImagePath = 'assets/profile.jpg';
   final AutoScrollController scrollController;
 
   const AboutSection({
@@ -96,14 +97,15 @@ class AboutSection extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              child: Center(
-                                child: Icon(
-                                  Icons.person,
-                                  size: 120,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withOpacity(0.6),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: ClipOval(
+                                  child: Image.asset(
+                                    _profileImagePath,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
                                 ),
                               ),
                             )
@@ -454,14 +456,15 @@ class AboutSection extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: Center(
-                          child: Icon(
-                            Icons.person,
-                            size: 80,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.6),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: ClipOval(
+                            child: Image.asset(
+                              _profileImagePath,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
                           ),
                         ),
                       )
