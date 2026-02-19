@@ -326,38 +326,47 @@ class _TypingNameTextState extends State<_TypingNameText>
           Theme.of(context).colorScheme.tertiary,
         ],
       ).createShader(bounds),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            displayedText,
-            style: TextStyle(
-              fontSize: widget.fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              height: 1.2,
-              letterSpacing: -1,
-            ),
-          ),
-          AnimatedBuilder(
-            animation: _cursorController,
-            builder: (context, child) {
-              return Opacity(
-                opacity: _cursorController.value,
-                child: Text(
-                  '_',
-                  style: TextStyle(
-                    fontSize: widget.fontSize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    height: 1.2,
-                    letterSpacing: -1,
-                  ),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerLeft,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Text(
+                displayedText,
+                style: TextStyle(
+                  fontSize: widget.fontSize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  height: 1.2,
+                  letterSpacing: -1,
                 ),
-              );
-            },
-          ),
-        ],
+                overflow: TextOverflow.visible,
+                softWrap: false,
+              ),
+            ),
+            AnimatedBuilder(
+              animation: _cursorController,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: _cursorController.value,
+                  child: Text(
+                    '_',
+                    style: TextStyle(
+                      fontSize: widget.fontSize,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      height: 1.2,
+                      letterSpacing: -1,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -18,6 +18,23 @@ class AboutSection extends StatelessWidget {
     }
   }
 
+  Future<void> _downloadResume() async {
+    // Open Google Drive direct file link to view resume
+    final resumeUrl =
+        'https://drive.google.com/file/d/107OIcfYsl4Tdok82DR2ST-GGqXTAv4h2/view?usp=sharing';
+    try {
+      final uri = Uri.parse(resumeUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+      }
+    } catch (e) {
+      print('Error opening resume: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -333,8 +350,7 @@ class AboutSection extends StatelessWidget {
                               ),
                               child: ElevatedButton.icon(
                                 onPressed: () {
-                                  // Will add resume link
-                                  _launchURL('YOUR_RESUME_LINK_HERE');
+                                  _downloadResume();
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
@@ -670,7 +686,7 @@ class AboutSection extends StatelessWidget {
                         ),
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            _launchURL('YOUR_RESUME_LINK_HERE');
+                            _downloadResume();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,

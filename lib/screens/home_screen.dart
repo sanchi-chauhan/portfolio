@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import '../main.dart';
 import '../widgets/hero_section.dart';
@@ -15,7 +19,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late AutoScrollController scrollController;
-  double _scrollOffset = 0.0;
+  bool _showFirefly = true;
+  final List<GlobalKey> _sectionKeys = List.generate(4, (_) => GlobalKey());
+  Timer? _snapDebounce;
+  bool _isAutoSnapping = false;
+  int? _snappedSection;
 
   @override
   void initState() {
@@ -25,13 +33,85 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onScroll() {
-    setState(() {
-      _scrollOffset = scrollController.offset;
-    });
+    if (!mounted) return;
+    final shouldShowFirefly = scrollController.offset <= 50;
+    if (shouldShowFirefly != _showFirefly) {
+      setState(() {
+        _showFirefly = shouldShowFirefly;
+      });
+    }
+    if (_isAutoSnapping) return;
+    _scheduleSnapCheck();
+  }
+
+  void _scheduleSnapCheck() {
+    _snapDebounce?.cancel();
+    _snapDebounce = Timer(const Duration(milliseconds: 120), _evaluateSnapTarget);
+  }
+
+  Future<void> _evaluateSnapTarget() async {
+    if (!mounted || _isAutoSnapping) return;
+    final viewportHeight = MediaQuery.of(context).size.height;
+    int targetIndex = -1;
+    double bestCoverage = 0.0;
+
+    for (int i = 0; i < _sectionKeys.length; i++) {
+      final sectionContext = _sectionKeys[i].currentContext;
+      if (sectionContext == null) continue;
+      final renderObject = sectionContext.findRenderObject();
+      if (renderObject is! RenderBox || !renderObject.attached) continue;
+
+      final top = renderObject.localToGlobal(Offset.zero).dy;
+      final bottom = top + renderObject.size.height;
+      final visibleTop = math.max(top, 0.0);
+      final visibleBottom = math.min(bottom, viewportHeight);
+      final visibleHeight = math.max(0.0, visibleBottom - visibleTop);
+      final coverage = visibleHeight / viewportHeight;
+
+      if (coverage > bestCoverage) {
+        bestCoverage = coverage;
+        targetIndex = i;
+      }
+    }
+
+    if (targetIndex == -1 || bestCoverage < 0.55) return;
+    if (_snappedSection == targetIndex) return;
+
+    final targetContext = _sectionKeys[targetIndex].currentContext;
+    if (targetContext == null) return;
+    final targetRenderObject = targetContext.findRenderObject();
+    if (targetRenderObject is! RenderBox || !targetRenderObject.attached) return;
+    final viewport = RenderAbstractViewport.of(targetRenderObject);
+    final rawOffset = viewport.getOffsetToReveal(targetRenderObject, 0.0).offset;
+    final targetOffset = rawOffset
+        .clamp(
+          scrollController.position.minScrollExtent,
+          scrollController.position.maxScrollExtent,
+        )
+        .toDouble();
+
+    if ((scrollController.offset - targetOffset).abs() < 1.0) {
+      _snappedSection = targetIndex;
+      return;
+    }
+
+    _isAutoSnapping = true;
+    try {
+      await scrollController.animateTo(
+        targetOffset,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+      _snappedSection = targetIndex;
+    } finally {
+      _isAutoSnapping = false;
+    }
   }
 
   @override
   void dispose() {
+    scrollController.removeListener(_onScroll);
+    _snapDebounce?.cancel();
     scrollController.dispose();
     super.dispose();
   }
@@ -49,8 +129,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   key: const ValueKey(0),
                   controller: scrollController,
                   index: 0,
-                  child: HeroSection(
-                    scrollController: scrollController,
+                  child: KeyedSubtree(
+                    key: _sectionKeys[0],
+                    child: HeroSection(
+                      scrollController: scrollController,
+                    ),
                   ),
                 ),
               ),
@@ -59,8 +142,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   key: const ValueKey(1),
                   controller: scrollController,
                   index: 1,
-                  child: AboutSection(
-                    scrollController: scrollController,
+                  child: KeyedSubtree(
+                    key: _sectionKeys[1],
+                    child: AboutSection(
+                      scrollController: scrollController,
+                    ),
                   ),
                 ),
               ),
@@ -69,8 +155,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   key: const ValueKey(2),
                   controller: scrollController,
                   index: 2,
-                  child: ProjectsSection(
-                    scrollController: scrollController,
+                  child: KeyedSubtree(
+                    key: _sectionKeys[2],
+                    child: ProjectsSection(
+                      scrollController: scrollController,
+                    ),
                   ),
                 ),
               ),
@@ -79,8 +168,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   key: const ValueKey(3),
                   controller: scrollController,
                   index: 3,
-                  child: ContactSection(
-                    scrollController: scrollController,
+                  child: KeyedSubtree(
+                    key: _sectionKeys[3],
+                    child: ContactSection(
+                      scrollController: scrollController,
+                    ),
                   ),
                 ),
               ),
@@ -137,14 +229,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-            ],
+              ],
           ),
           // Firefly - only show when first screen is 100% visible (scroll at top)
-          if (_scrollOffset <= 50)
+          if (_showFirefly)
             _Firefly(
               key: const ValueKey('firefly'),
               delay: 0,
-              scrollOffset: _scrollOffset,
+              scrollOffset: scrollController.hasClients ? scrollController.offset : 0,
             ),
         ],
       ),
