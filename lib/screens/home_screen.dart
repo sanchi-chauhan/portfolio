@@ -218,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 12),
                       // Copyright
                       Text(
-                        '© 2024 Sanchi Chauhan',
+                        '© 2026 Sanchi Chauhan',
                         style: TextStyle(
                           fontSize: 14,
                           color: Theme.of(context).textTheme.bodyMedium?.color,

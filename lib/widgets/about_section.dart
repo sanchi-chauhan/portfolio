@@ -160,7 +160,7 @@ class AboutSection extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 10),
                                       Text(
-                                        '2 yr 3 months',
+                                        '2 yr 8 months',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,
@@ -408,6 +408,7 @@ class AboutSection extends StatelessWidget {
                                 _SkillChip(label: 'Firebase', delay: 1800),
                                 _SkillChip(label: 'Git', delay: 1850),
                                 _SkillChip(label: 'MVVM', delay: 1900),
+                                _SkillChip(label: 'Clean Architecture', delay: 1900),
                               ],
                             ),
                           ],
@@ -548,7 +549,7 @@ class AboutSection extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              '2 yr 3 months',
+                              '2 yr 8 months',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500,
@@ -743,6 +744,7 @@ class AboutSection extends StatelessWidget {
                           _SkillChip(label: 'Firebase', delay: 1800),
                           _SkillChip(label: 'Git', delay: 1850),
                           _SkillChip(label: 'MVVM', delay: 1900),
+                          _SkillChip(label: 'Clean Architecture', delay: 1900),
                         ],
                       ),
                     ],
